@@ -2,6 +2,7 @@ package com.fawry.intern.atm.rest;
 
 import com.fawry.intern.atm.commen.AccountModel;
 import com.fawry.intern.atm.repository.entity.Account;
+import com.fawry.intern.atm.repository.entity.AmountRequest;
 import com.fawry.intern.atm.service.AtmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,35 +18,37 @@ public class AtmResource {
 
     private final AtmService atmService;
 
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<Account>> getAll() {
         return ResponseEntity.ok(atmService.getAllAccounts());
     }
 
-    @GetMapping("findByID/{userId}")
+    @GetMapping("{userId}")
     public ResponseEntity<Account> findAccount(@PathVariable long userId) {
         return ResponseEntity.ok(atmService.getAccountById(userId));
     }
 
-    @PostMapping("create")
+    @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody AccountModel accountModel) {
         atmService.createAccount(accountModel);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/balance/{userId}")
+    @GetMapping("{userId}/balance")
     public ResponseEntity<Double> getBalance(@PathVariable long userId) {
         return ResponseEntity.ok(atmService.getBalance(userId));
     }
 
-    @PostMapping(value = "/deposit", params = {"userId", "amount"})
-    public ResponseEntity<String> deposit(@RequestParam long userId, @RequestParam double amount) {
+    @PostMapping(value = "{userId}/deposit")
+    public ResponseEntity<String> deposit(@PathVariable long userId, @RequestBody AmountRequest request) {
+        double amount = request.getAmount();
         atmService.deposit(userId, amount);
         return ResponseEntity.ok("Deposit successful");
     }
 
-    @PostMapping(value = "/withdraw", params = {"userId", "amount"})
-    public ResponseEntity<String> withdraw(@RequestParam long userId, @RequestParam double amount) {
+    @PostMapping(value = "{userId}/withdraw")
+    public ResponseEntity<String> withdraw(@PathVariable long userId, @RequestBody AmountRequest request) {
+        double amount = request.getAmount();
         atmService.withdraw(userId, amount);
         return ResponseEntity.ok("Withdraw successful");
     }
