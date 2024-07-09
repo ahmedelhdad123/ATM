@@ -50,6 +50,7 @@ public class AtmResource {
     public ResponseEntity<String> withdraw(@PathVariable long userId, @RequestBody AmountRequest request) {
         double amount = request.getAmount();
         atmService.withdraw(userId, amount);
+
         return ResponseEntity.ok("Withdraw successful");
     }
 }
